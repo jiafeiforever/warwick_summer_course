@@ -1,13 +1,18 @@
 from flask import Flask, render_template, request, url_for, session, flash, redirect
+
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
+
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import session, flash
 from forms import RegistrationForm, LoginForm
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Required for Flask-WTF
 
-# Set the session lifetime to 30 minutes
+app = Flask(__name__)
+
+app.secret_key = 'your_secret_key'  # Flask-WTF 
+
+# Set the session lifecycle to 30 minutes
 app.permanent_session_lifetime = timedelta(minutes=30)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -19,11 +24,12 @@ def register():
             flash("Email already registered.", "danger")
             return redirect(url_for('register'))
         user = User(
-            student_id=form.student_id.data,
-            full_name=form.full_name.data,
-            email=form.email.data,
-            phone=form.phone.data
+         student_id=form.student_id.data,
+        full_name=form.full_name.data,
+        email=form.email.data,
+        phone=form.phone.data
         )
+
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -31,33 +37,43 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+
+# Route for handling user login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        session.permanent = True
+    if form.validate_on_submit():    # Check if form submission is valid
+        session.permanent = True  # Make the session follow the set expiration time
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
-            session['student_id'] = user.student_id
-            session['user_name'] = user.full_name
-            flash("Logged in successfully.", "success")
+            # Store user info in session for login persistence
+            session['student_id'] = user.student_id  
+            session['user_name'] = user.full_name   
+            flash("Logged in successfully.", "success")  # Success feedback
             return redirect(url_for('home'))
         else:
-            flash("Invalid email or password.", "danger")
+            flash("Invalid email or password.", "danger")  # Error feedback
     return render_template('login.html', form=form)
 
+# Route for handling user logout
 @app.route('/logout')
 def logout():
     session.pop('student_id', None)
     flash("You have been logged out.", "info")
     return redirect(url_for('login'))
 
-# SQLite database configuration
+
+
+# SQLite database setting
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///courses.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize database objects
 db = SQLAlchemy(app)
 
-# User model
+
+# user model
+
 class User(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(100), nullable=False)
@@ -71,7 +87,8 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-# Course model
+
+# courses model
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
@@ -80,33 +97,39 @@ class Course(db.Model):
     enrolled = db.Column(db.Integer, default=0)
     image_url = db.Column(db.String(200))
     description = db.Column(db.Text)
-    category = db.Column(db.String(100), nullable=False)
+    category = db.Column(db.String(100), nullable=False)  # add new field
 
     def __repr__(self):
         return f'<Course {self.name}>'
 
-# Enrollment model
 class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer)  # Match with User primary key
+    student_id = db.Column(db.Integer)  # Ensure consistency with the User primary key
     course_id = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Inject current year into templates
+
+
+# Current year template injection
 @app.context_processor
 def inject_current_year():
     return {'current_year': datetime.now().year}
 
-# Home page: display featured courses
+# homepage
+
 @app.route('/')
 def home():
     science_courses = Course.query.filter(Course.id.in_([1, 2, 3])).all()
     business_courses = Course.query.filter(Course.id.in_([4, 5, 6])).all()
     tech_courses = Course.query.filter(Course.id.in_([7, 8, 9])).all()
+
     return render_template("home.html",
                            science_courses=science_courses,
                            business_courses=business_courses,
                            tech_courses=tech_courses)
+
+
+
 
 @app.route('/courses')
 def courses():
@@ -118,10 +141,13 @@ def courses():
     courses = Course.query
     if query:
         courses = courses.filter(Course.name.ilike(f"%{query}%"))
+
     if category:
         courses = courses.filter_by(category=category)
+
     if instructor:
         courses = courses.filter_by(instructor=instructor)
+
     if time == "july":
         courses = courses.filter(Course.duration.ilike("%July%"))
     elif time == "august":
@@ -129,40 +155,93 @@ def courses():
 
     courses = courses.all()
 
-    # Get all filter options
+    # Provide all options for constructing the dropdown list
     all_categories = db.session.query(Course.category).distinct().all()
     all_instructors = db.session.query(Course.instructor).distinct().all()
+
+  # Flatten into a list
     categories = [c[0] for c in all_categories]
     instructors = [i[0] for i in all_instructors]
 
-    return render_template('courses.html',
-                           courses=courses,
-                           selected_category=category,
-                           selected_instructor=instructor,
-                           selected_time=time,
-                           categories=categories,
-                           instructors=instructors)
+    return render_template('courses.html', 
+                       courses=courses,
+                       selected_category=category,
+                       selected_instructor=instructor,
+                       selected_time=time,
+                       categories=categories,
+                       instructors=instructors)
 
-# Course detail page
+
+
+# single course details show
 @app.route('/courses/<int:course_id>')
 def course_detail(course_id):
     course = Course.query.get_or_404(course_id)
     return render_template("course_detail.html", course=course)
 
-# Enroll in a course
+# Initialize the database (required only for the first run)
+# with app.app_context():
+#     db.create_all()
+
+
+
+# ======= Initialize course data (run only once)）=======
+# def insert_initial_data():
+#     with app.app_context():
+#         courses = [
+#             Course(name='The Wonders of the Universe', duration='July 4 to July 20, 2025',
+#                    instructor='Dr. Emily', enrolled=42, image_url='/static/images/universe.jpg',
+#                    category='Science & Engineering'),
+#             Course(name='Genetics & DNA: Code of Life', duration='July 10 to July 25, 2025',
+#                    instructor='Prof. Alan', enrolled=58, image_url='/static/images/DNA.png',
+#                    category='Science & Engineering'),
+#             Course(name='Climate Science and Earth Systems', duration='Aug 1 to Aug 14, 2025',
+#                    instructor='Ms. Li', enrolled=30, image_url='/static/images/climate_science.png',
+#                    category='Science & Engineering'),
+
+#             Course(name='Learn to Think Like a CEO', duration='July 10 to July 24, 2025',
+#                    instructor='Dr. Linda', enrolled=33, image_url='/static/images/ceo.jpg',
+#                    category='Business & Management'),
+#             Course(name='Marketing Strategies for the Digital Era', duration='Aug 5 to Aug 20, 2025',
+#                    instructor='Ms. Nora', enrolled=41, image_url='/static/images/marketing.jpg',
+#                    category='Business & Management'),
+#             Course(name='Financial Planning & Analysis', duration='July 15 to Aug 1, 2025',
+#                    instructor='Mr. Kevin', enrolled=29, image_url='/static/images/finance.jpg',
+#                    category='Business & Management'),
+
+#             Course(name='Python for Beginners', duration='July 10 to July 24, 2025',
+#                    instructor='Dr. Jordan', enrolled=121, image_url='/static/images/python.jpg',
+#                    category='Technology & Computing'),
+#             Course(name='AI and Society', duration='Aug 1 to Aug 14, 2025',
+#                    instructor='Prof. Alan', enrolled=98, image_url='/static/images/ai.jpg',
+#                    category='Technology & Computing'),
+#             Course(name='Introduction to Cybersecurity', duration='Aug 5 to Aug 19, 2025',
+#                    instructor='Ms. Eva', enrolled=74, image_url='/static/images/cybersecurity.jpg',
+#                    category='Technology & Computing'),
+#         ]
+
+#         db.session.bulk_save_objects(courses)
+#         db.session.commit()
+#         print("Courses inserted successfully.")
+
+# Call the insertion function (only for the first run)
+#insert_initial_data()
+
 @app.route('/enroll/<int:course_id>')
 def enroll(course_id):
     course = Course.query.get_or_404(course_id)
     return render_template('enroll.html', course=course)
 
+
 @app.route('/submit_enrollment/<int:course_id>', methods=['POST'])
 def submit_enrollment(course_id):
     student_id = session.get('student_id')
+
     if not student_id:
         flash("You must be logged in.", "warning")
         return redirect(url_for('login'))
 
-    # Prevent duplicate enrollment
+    # Avoid duplicate enrollment
     existing = Enrollment.query.filter_by(student_id=student_id, course_id=course_id).first()
     if not existing:
         new_enroll = Enrollment(student_id=student_id, course_id=course_id)
@@ -172,10 +251,11 @@ def submit_enrollment(course_id):
     flash("Enrolled successfully!", "success")
     return redirect(url_for('my_enrolments'))
 
-# View my enrollments
+
 @app.route('/my_enrolments')
 def my_enrolments():
     student_id = session.get('student_id')
+
     if not student_id:
         return redirect(url_for('login'))
 
@@ -185,12 +265,14 @@ def my_enrolments():
         .filter(Enrollment.student_id == student_id)
         .all()
     )
+
     return render_template("my_enrolments.html", courses=enrolled_courses)
 
-# Cancel enrollment
+# cancel enrolment 
 @app.route('/cancel_enrollment/<int:course_id>', methods=['POST'])
 def cancel_enrollment(course_id):
     student_id = session.get('student_id')
+
     if student_id:
         enrollment = Enrollment.query.filter_by(student_id=student_id, course_id=course_id).first()
         if enrollment:
@@ -199,22 +281,17 @@ def cancel_enrollment(course_id):
             flash("Enrollment cancelled.", "info")
     return redirect(url_for('my_enrolments'))
 
-# Instructor list
 @app.route('/teachers')
 def teachers():
     instructors = db.session.query(Course.instructor).distinct().all()
-    instructors = [i[0] for i in instructors]
+    instructors = [i[0] for i in instructors]  # Extract pure string
     return render_template('teachers.html', instructors=instructors)
 
-# Courses by instructor
+
 @app.route('/courses/instructor/<instructor>')
 def courses_by_instructor(instructor):
     courses = Course.query.filter_by(instructor=instructor).all()
     return render_template('courses.html', courses=courses, selected_instructor=instructor)
-
-# Create tables (run once)
-with app.app_context():
-    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)
