@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Courses{% endblock %}
+
+
+
+{% block content %}
+
+<div class="filter-bar">
+      <div class="container">
+
+    <div class="filter-wrapper">
+    <div class="filter-label">
+        Find a course
+    </div>
+
+    <form method="GET" action="{{ url_for('courses') }}" class="filter-form">
+        <select name="category">
+            <option value="">Select Category</option>
+            {% for c in categories %}
+                <option value="{{ c }}" {% if request.args.get('category') == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="time">
+            <option value="">Select Time</option>
+            <option value="july">July</option>
+            <option value="august">August</option>
+        </select>
+
+        <select name="instructor">
+            <option value="">Select Instructor</option>
+            {% for i in instructors %}
+                <option value="{{ i }}" {% if request.args.get('instructor') == i %}selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="text" name="query" placeholder="Course name, subject or code" value="{{ request.args.get('query', '') }}">
+        <button type="submit">Search</button>
+    </form>
+    </div>
+</div>
+
+<!-- 课程卡片展示区 -->
+<div class="course-listing">
+    {% if courses %}
+        {% for course in courses %}
+            {% include 'components/course_card.html' %}
+        {% endfor %}
+    {% else %}
+        <p style="text-align:center;">No matching courses found.</p>
+    {% endif %}
+</div>
+
+
+{% endblock %}

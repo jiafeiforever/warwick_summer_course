@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Student Registration</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <div class="form-group">
+        <label for="{{ form.student_id.id }}">{{ form.student_id.label.text }}</label><br>
+        {{ form.student_id(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.full_name.id }}">{{ form.full_name.label.text }}</label><br>
+        {{ form.full_name(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.email.id }}">{{ form.email.label.text }}</label><br>
+        {{ form.email(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.phone.id }}">{{ form.phone.label.text }}</label><br>
+        {{ form.phone(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.password.id }}">{{ form.password.label.text }}</label><br>
+        {{ form.password(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.confirm_password.id }}">{{ form.confirm_password.label.text }}</label><br>
+        {{ form.confirm_password(class="form-control") }}
+    </div>
+
+    <div class="form-submit">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+
+</div>
+{% endblock %}

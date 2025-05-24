@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Warwick Summer Courses{% endblock %}
+
+{% block banner %}
+<div class="banner">
+    <img src="{{ url_for('static', filename='banner.png') }}" alt="Banner">
+    <div class="banner-text">
+        <h1>Welcome to the University of Warwick!</h1>
+        <p>Flexible Summer Camp Courses, Real-World Skills</p>
+        <a href="{{ url_for('courses') }}" class="banner-button">Register Your Courses</a>
+    </div>
+</div>
+
+
+
+<!-- Poplar courses -->
+<div class="section-header">
+    <h2>Popular Courses</h2>
+    <a href="{{ url_for('courses') }}" class="find-more-button">
+      Find more <span class="arrow">▶</span>
+    </a>
+  </div>
+  
+<div class="course-listing">
+  {% for course in science_courses %}
+    {% include 'components/course_card.html' %}
+  {% endfor %}
+</div>
+
+<!-- session booking -->
+
+<div class="section-wrapper">
+  <div class="session-section">
+    <div class="session-text">
+     <h2 class="session-title">Summer Course Information Session</h2>
+
+      <p>Join our upcoming Summer Course Information Session to discover everything you need to know about our exciting programme. This session will cover available courses, learning outcomes, daily schedules, and the vibrant campus life at the University of Warwick.</p>
+      <a href="#" class="session-button">Book your place &gt;</a>
+    </div>
+    <div class="session-image">
+      <img src="{{ url_for('static', filename='images/session_info.jpg') }}" alt="Summer Course Info Session">
+    </div>
+  </div>
+</div>
+
+
+<div class="section-header">
+  <h2>Popular Teachers</h2>
+    <a href="/teachers" class="find-more-button">
+    Find more <span class="arrow">▶</span>
+  </a>
+</div>
+
+<div class="course-listing">
+  <div class="course-card">
+    <img src="/static/images/teacher1.png" alt="Dr. Linda">
+    <div class="card-body">
+      <div class="course-info">
+        <h4>Dr. Linda</h4>
+        <p>Expert in business leadership, guiding students to think like CEOs.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="course-card">
+    <img src="/static/images/teacher2.png" alt="Prof. Alan">
+    <div class="card-body">
+      <div class="course-info">
+        <h4>Prof. Alan</h4>
+        <p>Specialist in genetics and biotechnology with interactive lectures.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="course-card">
+    <img src="/static/images/teacher3.png" alt="Prof. Li">
+    <div class="card-body">
+      <div class="course-info">
+        <h4>Prof. Li</h4>
+        <p>Climate researcher passionate about sustainability and the planet.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block content %}
+{% endblock %}

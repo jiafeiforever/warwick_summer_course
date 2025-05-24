@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}My Enrolments{% endblock %}
+
+{% block content %}
+<h2 style="text-align:center; margin: 30px 0;">Here are the courses you have enrolled in:</h2>
+
+<div class="course-listing">
+  {% if courses %}
+    {% for course in courses %}
+      {% set show_cancel = True %}
+      {% include 'components/course_card.html' %}
+    {% endfor %}
+  {% else %}
+    <p style="text-align:center;">You haven't enrolled in any courses yet.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

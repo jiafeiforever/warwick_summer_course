@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Course Enrolment{% endblock %}
+
+{% block content %}
+
+<div class="enroll-title">
+    <h2>Register your details → Registration confirmation</h2>
+</div>
+
+
+<!-- page container -->
+<div class="enroll-page-container">
+
+<div class="course-card-box">
+    <div class="course-card">
+        <img src="{{ course.image_url }}" alt="{{ course.name }}">
+
+        <div class="card-body"> <!-- ✅ 使用统一样式 -->
+            <div class="course-info">
+                <h4>{{ course.name }}</h4>
+                <p>📅 Duration: {{ course.duration }}</p>
+                <p>🎓 Instructor: {{ course.instructor }}</p>
+                <p>👥 {{ course.enrolled }} enrolled</p>
+            </div>
+
+            <div class="button-wrapper">
+                <a href="{{ url_for('course_detail', course_id=course.id) }}" class="card-button">View details</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- right: registration form -->
+    <div class="enroll-form-box">
+        <!-- <form action="{{ url_for('submit_enrollment', course_id=course.id) }}" method="POST" class="enroll-form"> -->
+        
+            <form id="enroll-form" action="{{ url_for('submit_enrollment', course_id=course.id) }}" method="POST" class="enroll-form">
+
+            <h2>Enroll in the Course</h2>
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <label for="notes">Additional Notes</label>
+                <textarea id="notes" name="notes" rows="4"></textarea>
+
+      
+          <!--  <button type="button" id="confirm-btn">Submit</button>--> 
+            <!-- 改成非提交按钮，点击后手动弹窗 -->
+<button type="button" id="confirm-btn" class="card-button">Submit</button>
+
+
+        </form>
+    </div>
+</div>
+
+
+<!-- 自定义弹窗 -->
+<div id="confirm-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <h3>Are you sure to enroll this course?</h3>
+    <div class="modal-actions">
+      <button id="modal-yes" class="modal-button">Yes</button>
+      <button id="modal-no" class="modal-button cancel">No</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

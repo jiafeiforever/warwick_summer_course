@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Instructors{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 style="margin: 40px 0 20px;">All Instructors</h2>
+  <ul style="list-style: none; padding-left: 0;">
+    {% for instructor in instructors %}
+      <li style="margin: 10px 0;">
+        <a href="{{ url_for('courses_by_instructor', instructor=instructor) }}" style="font-size: 1.2rem; color: #5a2a82; text-decoration: none;">
+          {{ instructor }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

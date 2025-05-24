@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "instance/courses.db",
+            "name": "MyDB",
+            "group": "MyDB"
+        }
+    ]
+}

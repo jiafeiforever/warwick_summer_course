@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Warwick Summer Courses{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
+
+</head>
+
+<header class="top-nav">
+    <div class="nav-container">
+        <div class="nav-left">
+            <img src="{{ url_for('static', filename='warwick_logo.png') }}" alt="Warwick Logo" class="logo">
+        </div>
+    
+    <!-- search box  -->
+    <form class="nav-search" action="{{ url_for('courses') }}" method="get">
+        <input type="text" name="query" placeholder="Input key words to search">
+        <button type="submit">&#128269;</button>
+    </form>
+    
+<nav class="nav-right">
+  <a href="{{ url_for('home') }}" class="{% if request.path == '/' %}active{% endif %}">Homepage</a>
+
+  <a href="{{ url_for('courses') }}" class="{% if request.path.startswith('/courses') %}active{% endif %}">Courses</a>
+
+  <a href="{{ url_for('my_enrolments') }}" class="{% if request.path.startswith('/my_enrolments') %}active{% endif %}">My Enrolments</a>
+
+  {% if session.get('student_id') %}
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <span class="username">Hi, {{ session.get('user_name') }}</span>
+  {% else %}
+<a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active-link{% endif %}">Login</a>
+<a href="{{ url_for('register') }}" class="{% if request.endpoint == 'register' %}active-link{% endif %}">Register</a>
+
+
+  {% endif %}
+</nav>
+
+    </div>
+</header>
+
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container" style="margin-top: 20px;">
+      {% for category, message in messages %}
+    
+
+        <div class="alert">
+  {{ message }}
+  <button type="button" class="btn-close" onclick="this.parentElement.style.display='none';">&times;</button>
+</div>
+
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+    {% block banner %}
+   
+    {% endblock %}
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const confirmBtn = document.getElementById("confirm-btn");
+    const modal = document.getElementById("confirm-modal");
+    const yesBtn = document.getElementById("modal-yes");
+    const noBtn = document.getElementById("modal-no");
+    const form = document.getElementById("enroll-form");
+
+    if (confirmBtn && form && modal && yesBtn && noBtn) {
+        confirmBtn.addEventListener("click", function () {
+            modal.style.display = "flex";
+        });
+
+        yesBtn.addEventListener("click", function () {
+            modal.style.display = "none";
+            form.submit();  // ✅ 用户点击 Yes → 提交表单
+        });
+
+        noBtn.addEventListener("click", function () {
+            modal.style.display = "none";  // ❌ 用户点击 No → 关闭弹窗
+        });
+    }
+});
+</script>
+
+
+    {% block footer %}
+    <footer style="text-align: center; margin-top: 40px; font-size: 0.9em; color: #666;">
+        &copy; {{ current_year }} University of Warwick. All rights reserved.
+    </footer>
+
+
+    {% endblock %}
+</body>
+
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- Connect -->
+    <div class="footer-column">
+      <h4>Connect with us</h4>
+      <div class="social-icons">
+     <!-- Facebook -->
+<a href="https://www.facebook.com/warwickuniversity" target="_blank">
+  <img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook">
+</a>
+
+<!-- X (Twitter) -->
+<a href="https://x.com/uniofwarwick" target="_blank">
+  <img src="{{ url_for('static', filename='images/x.png') }}" alt="X (Twitter)">
+</a>
+
+<!-- LinkedIn -->
+<a href="https://www.linkedin.com/school/uniofwarwick/" target="_blank">
+  <img src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn">
+</a>
+
+      </div>
+    </div>
+
+    <!-- Talk -->
+    <div class="footer-column">
+      <h4>Talk to us</h4>
+      <p><a href="#">💬 Live Chat</a></p>
+      <p><a href="#">💬 Make an enquiry</a></p>
+    </div>
+
+    <!-- Location -->
+    <div class="footer-column">
+      <h4>Find us</h4>
+      <p><a href="https://warwick.ac.uk/about/visiting/">📍 University of Warwick<br>Coventry, CV4 7AL, UK</a></p>
+    </div>
+
+  </div>
+</footer>
+
+</html>

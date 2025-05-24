@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.name }} - Details{% endblock %}
+
+{% block content %}
+<div class="course-detail-container">
+
+  <div class="course-detail-card">
+    <!-- 左侧课程图像 -->
+    <div class="course-image">
+      <img src="{{ course.image_url }}" alt="{{ course.name }}">
+    </div>
+
+    <!-- 右侧课程信息 -->
+    <div class="course-info">
+      <h2>{{ course.name }}</h2>
+      <p>📅 <strong>Duration:</strong> {{ course.duration }}</p>
+      <p>🎓 <strong>Instructor:</strong> {{ course.instructor }}</p>
+      <p>👥 <strong>{{ course.enrolled }} enrolled</strong></p>
+
+      <!-- 星级评分（示意固定5颗星） -->
+      <div class="course-rating">
+        ⭐ ⭐ ⭐ ⭐ ⭐
+      </div>
+
+      <!-- 报名按钮 -->
+      <div class="enrol-button-container">
+        <a href="{{ url_for('enroll', course_id=course.id) }}" class="enroll-button">Click to Enroll</a>
+    </div>
+    
+   
+
+    
+    </div>
+  </div>
+
+</div>
+
+
+<!-- Course Details Section -->
+<section class="course-details-section">
+    <h3>Course Details</h3>
+    <div class="course-description">
+      <p><strong>Course Description:</strong><br>
+        {{ course.description or "This course introduces students to the fundamentals of Python programming. It is designed for complete beginners, focusing on core programming concepts such as variables, control structures, functions, and data structures. Through hands-on exercises and real-world examples, students will gain the skills necessary to write simple Python scripts and understand the logic behind coding." }}
+      </p>
+  
+      <p><strong>Learning Objectives:</strong></p>
+      <ul>
+        <li>Understand the basic syntax and structure of Python</li>
+        <li>Write and debug Python scripts</li>
+        <li>Apply conditional statements and loops effectively</li>
+        <li>Use functions and data types (lists, dictionaries, etc.)</li>
+        <li>Build a simple command-line application by the end of the course</li>
+      </ul>
+    </div>
+  </section>
+  
+  <!-- Instructor Details Section -->
+  <section class="instructor-details-section">
+    <h3>Instructor Details</h3>
+    <div class="instructor-info" style="display: flex; gap: 20px; align-items: flex-start;">
+      <img src="{{ url_for('static', filename='images/instructor.jpg') }}" alt="Instructor photo" style="width: 200px; height: auto; border-radius: 8px;">
+      <div>
+        <p><strong>{{ course.instructor }}</strong> – Python Educator & Tech Enthusiast</p>
+        <p>
+          {{ course.instructor }} is a senior lecturer in Computer Science with over 10 years of teaching experience in software development and programming languages. 
+          They hold a PhD in Computational Learning and have led numerous coding bootcamps and university workshops. Passionate about accessible education, 
+          {{ course.instructor }} is committed to helping beginners overcome technical barriers and develop strong foundational skills in Python.
+        </p>
+      </div>
+    </div>
+  </section>
+  
+{% endblock %}

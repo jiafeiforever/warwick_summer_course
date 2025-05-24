@@ -1,0 +1,23 @@
+<div class="course-card">
+    <img src="{{ course.image_url }}" alt="{{ course.name }}">
+
+    <div class="card-body">
+        <div class="course-info">
+            <h4>{{ course.name }}</h4>
+            <p>📅 Duration: {{ course.duration }}</p>
+            <p>👨‍🏫 Instructor: {{ course.instructor }}</p>
+            <p>👥 {{ course.enrolled }} enrolled</p>
+        </div>
+
+        <div class="button-wrapper">
+            <a href="{{ url_for('course_detail', course_id=course.id) }}" class="card-button">View details</a>
+              {% if show_cancel %}
+      <form method="POST" action="{{ url_for('cancel_enrollment', course_id=course.id) }}" style="display:inline;">
+      <button type="submit" class="card-button cancel">Cancel</button>
+        </form>
+             {% endif %}
+        </div>
+    </div>
+</div>
+
+
