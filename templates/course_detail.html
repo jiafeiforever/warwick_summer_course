@@ -6,30 +6,27 @@
 <div class="course-detail-container">
 
   <div class="course-detail-card">
-    <!-- 左侧课程图像 -->
+    <!-- Left-side course image -->
     <div class="course-image">
       <img src="{{ course.image_url }}" alt="{{ course.name }}">
     </div>
 
-    <!-- 右侧课程信息 -->
+    <!-- right-side course information-->
     <div class="course-info">
       <h2>{{ course.name }}</h2>
       <p>📅 <strong>Duration:</strong> {{ course.duration }}</p>
       <p>🎓 <strong>Instructor:</strong> {{ course.instructor }}</p>
       <p>👥 <strong>{{ course.enrolled }} enrolled</strong></p>
 
-      <!-- 星级评分（示意固定5颗星） -->
       <div class="course-rating">
         ⭐ ⭐ ⭐ ⭐ ⭐
       </div>
 
-      <!-- 报名按钮 -->
+      <!-- enroll button -->
       <div class="enrol-button-container">
         <a href="{{ url_for('enroll', course_id=course.id) }}" class="enroll-button">Click to Enroll</a>
     </div>
     
-   
-
     
     </div>
   </div>
